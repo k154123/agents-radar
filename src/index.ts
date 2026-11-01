@@ -609,7 +609,7 @@ async function main(): Promise<void> {
   }
 
   console.log("  Generating highlights for Telegram...");
-  const highlights: Record<Lang, ReportHighlights> = { zh: {}, en: {} };
+  const highlights: Record<Lang, ReportHighlights> & { ru: ReportHighlights } = { zh: {}, en: {}, ru: {} };
   // Both passes parse JSON, and both retry once: the LLM occasionally emits
   // slightly malformed JSON that repairJson can't fix (seen 2026-07-13: zh
   // failed with "Expected ',' or ']' after array element"); a fresh generation
@@ -646,6 +646,21 @@ async function main(): Promise<void> {
   highlights.en = await attemptJson("en", buildHighlightsPrompt(enReports, "en"));
   highlights.zh = Object.keys(highlights.en).length
     ? await attemptJson("zh", buildJsonTranslationPrompt(JSON.stringify(highlights.en)))
+    : {};
+  highlights.ru = Object.keys(highlights.en).length
+    ? await attemptJson(
+        "ru",
+        `Переведи значения строк в следующем JSON на естественный русский язык.
+
+${JSON.stringify(highlights.en)}
+
+Правила:
+- Верни ТОЛЬКО корректный JSON, без Markdown и пояснений.
+- Сохрани все ключи, порядок и количество элементов массивов.
+- Переводи обычные предложения на русский; названия проектов, компаний, моделей, продуктов, репозиториев, версии и числа оставляй без изменений.
+- Не сокращай смысл и не добавляй фактов.
+- Каждый пункт должен звучать естественно и конкретно для русскоязычного читателя.`,
+      )
     : {};
 
   // If one language failed (generation or parse) but the other succeeded,
