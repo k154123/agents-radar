@@ -179,6 +179,19 @@ export const REPORT_LABELS: Record<string, string> = {
   "ai-monthly-en": "AI Tools Monthly Digest",
 };
 
+export const NOTIFY_LABELS_RU: Record<string, string> = {
+  "ai-cli": "AI CLI-инструменты",
+  "ai-agents": "Экосистема AI-агентов",
+  "ai-infra": "Инфраструктура ИИ",
+  "ai-web": "Новости компаний",
+  "ai-trending": "Тренды GitHub",
+  "ai-hn": "Обсуждения Hacker News",
+  "ai-ph": "Новые AI-продукты",
+  "ai-arxiv": "Научные исследования ArXiv",
+  "ai-hf": "Популярные модели Hugging Face",
+  "ai-community": "Новости AI-сообществ",
+};
+
 export const NOTIFY_LABELS: Record<string, Record<Lang, string>> = {
   "ai-cli": t("AI CLI 工具", "AI CLI Tools"),
   "ai-agents": t("AI Agents 生态", "AI Agents Ecosystem"),
