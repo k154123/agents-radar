@@ -310,7 +310,7 @@ ${sections}
 
 ---
 
-For each report, extract ${itemsPerReport} of the most noteworthy highlights — the kind that would make a reader want to click through. Each highlight should be a single short sentence (under 60 characters).
+For each report, extract ${itemsPerReport} of the most noteworthy highlights — the kind that would make a reader want to click through. Each highlight must be a concrete, informative 1–2 sentence item (roughly 100–180 characters). State what happened, name the project/company/model, include a version, date, metric, capability, or other concrete fact when present in the source, and explain the practical significance. Avoid vague wording such as "announced something new" or "an important update". Do not infer facts missing from the report.
 
 Return ONLY valid JSON, no markdown fences, no explanation. Format:
 {"ai-cli":["highlight 1","highlight 2",...],"ai-agents":["highlight 1","highlight 2",...],...}
@@ -318,9 +318,13 @@ Return ONLY valid JSON, no markdown fences, no explanation. Format:
 Rules:
 - Use the exact report IDs from the [brackets] above as keys
 - Only include reports that have meaningful content (skip reports with failure messages or no activity)
-- ${itemsPerReport} highlights per report, each under 60 characters
-- Focus on: new releases, notable features, trending projects, key discussions
-- Be specific: include project names, version numbers, star counts where relevant`;
+- Prefer the 3 most useful highlights per report; never pad the list with weak items
+- Each item should be 1–2 complete sentences, about 100–180 characters
+- Explain the actual change or finding, not merely that an update exists
+- Include concrete names, versions, dates, numbers, benchmarks, affected users, or availability details when present
+- Distinguish shipped features from proposals, open issues, opinions, and speculation
+- If the source only contains a title or metadata, say that details are unavailable; never invent a summary
+- Preserve the original source link when one appears in the report`;
   }
 
   return `你是一位简洁的新闻编辑。以下是今日 AI 生态各报告的摘要，每个报告用 ID 标注。
