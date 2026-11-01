@@ -12,12 +12,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import { NOTIFY_LABELS } from "./i18n.ts";
+import { NOTIFY_LABELS, NOTIFY_LABELS_RU } from "./i18n.ts";
 import type { ReportHighlights } from "./prompts-data.ts";
 
 export interface Highlights {
   zh: ReportHighlights;
   en: ReportHighlights;
+  ru?: ReportHighlights;
 }
 
 const PAGES_URL_DEFAULT = "https://duanyytop.github.io/agents-radar";
@@ -56,26 +57,26 @@ export function buildMessage(
   const ordered = reports.filter((r) => !r.endsWith("-en"));
   const lines: string[] = [`📡 <b>agents-radar · ${date}</b>`];
 
+  const ruHighlights = highlights?.ru ?? {};
   const zhHighlights = highlights?.zh ?? {};
   const enHighlights = highlights?.en ?? {};
 
   for (const r of ordered) {
-    const zhLabel = NOTIFY_LABELS[r]?.zh ?? r;
-    const zhUrl = `${PAGES_URL}/#${date}/${r}`;
+    const ruLabel = NOTIFY_LABELS_RU[r] ?? r;
+    const ruUrl = `${PAGES_URL}/#${date}/${r}`;
     const enKey = `${r}-en`;
 
-    lines.push(""); // blank line before each report section
+    lines.push("");
     if (reports.includes(enKey)) {
       const enLabel = NOTIFY_LABELS[r]?.en ?? "EN";
       const enUrl = `${PAGES_URL}/#${date}/${enKey}`;
-      lines.push(`• <a href="${zhUrl}">${zhLabel}</a>  ·  <a href="${enUrl}">${enLabel}</a>`);
+      lines.push(`• <a href="${ruUrl}">${ruLabel}</a>  ·  <a href="${enUrl}">${enLabel}</a>`);
     } else {
-      lines.push(`• <a href="${zhUrl}">${zhLabel}</a>`);
+      lines.push(`• <a href="${ruUrl}">${ruLabel}</a>`);
     }
 
-    // Add highlights as indented sub-items. Fall back to en when a report's zh
-    // highlights are missing so a single-language failure never blanks the message.
-    const items = zhHighlights[r] ?? enHighlights[r];
+    // Russian is primary; fall back only if translation failed.
+    const items = ruHighlights[r] ?? zhHighlights[r] ?? enHighlights[r];
     if (items?.length) {
       for (const h of items) {
         lines.push(`  ◦ ${escapeHtml(h)}`);
